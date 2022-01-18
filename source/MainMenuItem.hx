@@ -10,8 +10,9 @@ class MainMenuItem extends FlxText {
     public function new(name:String) {
         super(0, 0, 0, name, 16);
 
+        #if !android
         font = 'assets/data/fonts/arial.ttf';
-
+        #end
 
     }
 
