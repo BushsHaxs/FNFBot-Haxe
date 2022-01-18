@@ -27,11 +27,18 @@ class PlayState extends FlxState
 
 	var vocals:FlxSound;
 
+	public var song:String;
+
+	public function new(song:String) {
+		this.song = song;
+		super();
+	}
+
 	override public function create()
 	{
 		instance = this;
 
-		generateSong();
+		generateSong(song);
 
 		for (i in 0...(Note.ammo[mania] * 2)) {
 			var strumLine:StrumPos = new StrumPos(mania);
@@ -58,12 +65,10 @@ class PlayState extends FlxState
 				vocals = new FlxSound();
 
 			FlxG.sound.list.add(vocals);
-			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song));
 
 			notes = new FlxTypedGroup<Note>();
 			add(notes);
 
-			vocals.play();
 
 			songSpeed = songData.speed;
 			songSpeed *= 0.6;
@@ -134,7 +139,17 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float)
 	{
-		Conductor.songPosition = FlxG.sound.music.time;
+		if (#if !android FlxG.keys.justPressed.ENTER #else FlxG.touches.list[0].justPressed #end && FlxG.sound.music == null) {
+			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song));
+			vocals.play();
+
+			FlxG.sound.music.onComplete = function() {
+				trace('song finished');
+				FlxG.switchState(new MainMenu());
+			}
+		} 
+
+		if (FlxG.sound.music != null) Conductor.songPosition = FlxG.sound.music.time;
 
 		var roundedSpeed:Float = FlxMath.roundDecimal(songSpeed, 2);
 		if (unspawnNotes[0] != null)
