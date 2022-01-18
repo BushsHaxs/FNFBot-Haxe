@@ -2,6 +2,9 @@ package;
 
 import flixel.FlxGame;
 import openfl.display.Sprite;
+import sys.FileSystem;
+import lime.app.Application;
+import lime.system.System;
 
 class Main extends Sprite
 {
